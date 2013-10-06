@@ -8,7 +8,6 @@
 
 #include "gl_utils.h"
 #include "my_log.h"
-#include "cube_render.h"
 
 static const char gVertexShader[] = 
     "attribute vec4 vPosition;\n"
