@@ -1,2 +1,2 @@
-# GNU STL needed for GLM lib support
+# GNUSTL needed for GLM lib support
 APP_STL := gnustl_static
