@@ -4,7 +4,9 @@ include $(CLEAR_VARS)
 
 # Local App
 LOCAL_MODULE    := libgl2jni
-LOCAL_CFLAGS    := -Werror
+
+# TEST_APP defines which TEST to RUN
+LOCAL_CFLAGS    := -Werror -DTEST_APP=1
 LOCAL_SRC_FILES := gl_code.cpp
 LOCAL_LDLIBS    := -llog -lGLESv2
 

@@ -10,6 +10,10 @@
 #include "my_log.h"
 #include "tests/RenderTriangle.h"
 
+#ifndef TEST_APP
+#	define TEST_APP 1
+#endif
+
 
 extern "C" {
     JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,  jint width, jint height);
@@ -18,10 +22,14 @@ extern "C" {
 
 JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_init(JNIEnv * env, jobject obj,  jint width, jint height)
 {
-	TTRIANGLE::setupGraphics(width, height);
+	if(TEST_APP == 1) {
+		TTRIANGLE::setupGraphics(width, height);
+	}
 }
 
 JNIEXPORT void JNICALL Java_com_android_gl2jni_GL2JNILib_step(JNIEnv * env, jobject obj)
 {
-	TTRIANGLE::renderFrame();
+	if(TEST_APP == 1) {
+		TTRIANGLE::renderFrame();
+	}
 }
