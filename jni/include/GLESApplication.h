@@ -23,34 +23,10 @@
 struct saved_state {
 };
 
+
 /**
- * Shared state for our app.
+ * Virtual GLES Application.
  */
-struct engine {
-	//This is the interface for the standard glue code of a threaded application.
-    struct android_app* app;
-
-    // External
-    ASensorManager* sensorManager;
-    const ASensor* accelerometerSensor;
-    ASensorEventQueue* sensorEventQueue;
-
-    // @TODO - Keep State?
-    int animating;
-
-    // Internals of EGL
-    EGLDisplay display;
-    EGLSurface surface;
-    EGLContext context;
-
-    // Screen info
-    int32_t width;
-    int32_t height;
-
-    // Our App Saved Data
-    struct saved_state state;
-};
-
 class GLESApplication
 {
     public:
@@ -76,34 +52,64 @@ class GLESApplication
          */
         void terminateWindow(android_app *app) {}
         void tearDownEGLContext();
-        virtual int32_t handleInput(struct android_app* app, AInputEvent* event);
+
+
+
         void handleCommand(struct android_app* app, int32_t cmd);
+
         double getCuttentTime();
+
+        /**
+         * Native Thread, lets loop it
+         */
         void run();
     
 protected:
+        // Ready to inherit
+        virtual int32_t handleInput(struct android_app* app, AInputEvent* event);
         virtual void saveState(android_app *app) {}
         virtual void gainedFocus(android_app *app) {}
         virtual void lostFocus(android_app *app) {}
-        virtual void _drawOneFrame(double ellapsedTime);
-        virtual void drawOneFrame(double ellapsedTime)  = 0;
         virtual void onStart(android_app* app) {}
+
+        // Must implement methods
+        virtual void drawOneFrame(double ellapsedTime)  = 0;
         virtual void initShaders() = 0;
         virtual void positInit() = 0;
+
         GLuint compileShader(const char *path, GLenum shaderType);
         char *loadShaderFromFile(const char *path);
         
-
+private:
+        /**
+         * Before calling the
+         */
+        virtual void _drawOneFrame(double ellapsedTime);
     
 protected:
-        EGLDisplay display;
-        EGLSurface surface;
-        EGLContext context;
-        android_app *androidContext;
-        int width;
-        int height;
-        GLuint shaderProgramObject;
+        //This is the interface for the standard glue code of a threaded application.
+		struct android_app* androidContext;
 
-        struct engine engine;
+		// External
+		ASensorManager* sensorManager;
+		const ASensor* accelerometerSensor;
+		ASensorEventQueue* sensorEventQueue;
+
+		// @TODO - Keep State?
+		int animating;
+
+		// Internals of EGL
+		EGLDisplay display;
+		EGLSurface surface;
+		EGLContext context;
+
+		// Screen info
+		int32_t width;
+		int32_t height;
+
+		// Our App Saved Data
+		struct saved_state state;
+
+        GLuint shaderProgramObject;
 };
 #endif // GLES_APPLICATION_H

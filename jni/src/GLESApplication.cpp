@@ -222,13 +222,19 @@ void GLESApplication::_drawOneFrame(double ellapsedTime)
     eglSwapBuffers(this->display, this->surface);
 }
 
-
+/**
+ * Static function to handle input. Because we receive the android_app context
+ * we can cast the user data saved before to our GLESApplication.
+ */
 static int32_t handle_input(struct android_app* app, AInputEvent* event) {
     GLESApplication *glApp = (GLESApplication*) app->userData;
     return glApp->handleInput(app, event);
 }
 
-
+/**
+ * Static function to handle commands. Because we receive the android_app context
+ * we can cast the user data saved before to our GLESApplication.
+ */
 static void handle_cmd(struct android_app* app, int32_t cmd) {
     GLESApplication *glesApp = (GLESApplication *)app->userData;
     glesApp->handleCommand(app, cmd);
@@ -275,6 +281,7 @@ void GLESApplication::run()
         int ident;
         int events;
         struct android_poll_source* source;
+        double diff;
 
         // If not animating, we will block forever waiting for events.
         // If animating, we loop until all events are read, then continue
@@ -295,7 +302,8 @@ void GLESApplication::run()
         }
         
         
-        if(timeSinceLastFrame >= delta) {
+        // VERSION 1 - DELTA VERSION
+        /*if(timeSinceLastFrame >= delta) {
             if(start >= 1000) {
                 LOGI("FPS: %d", frames);
                 frames = 0;
@@ -307,7 +315,22 @@ void GLESApplication::run()
         }
         double diff = getCuttentTime() - startTime;
         timeSinceLastFrame += diff;
-        start += diff;
+        start += diff;*/
+
+        // VERSION 2 - SYNC VERSION
+        // Drawing is throttled to the screen update rate, so there
+        // is no need to do timing here. (google comment)
+        // @TODO - Investigate this
+        _drawOneFrame(diff);
+        frames++;
+        if(start >= 1000) {
+        	LOGI("FPS: %d", frames);
+        	frames = 0;
+        	start = 0;
+        }
+		diff = getCuttentTime() - startTime;
+		start += diff;
+
     }
     
 }
