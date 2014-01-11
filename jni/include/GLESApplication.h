@@ -53,9 +53,11 @@ class GLESApplication
         void terminateWindow(android_app *app) {}
         void tearDownEGLContext();
 
-
-
+        /**
+         * Android handlers
+         */
         void handleCommand(struct android_app* app, int32_t cmd);
+        virtual int32_t handleInput(struct android_app* app, AInputEvent* event);
 
         double getCuttentTime();
 
@@ -66,7 +68,6 @@ class GLESApplication
     
 protected:
         // Ready to inherit
-        virtual int32_t handleInput(struct android_app* app, AInputEvent* event);
         virtual void saveState(android_app *app) {}
         virtual void gainedFocus(android_app *app) {}
         virtual void lostFocus(android_app *app) {}
@@ -80,10 +81,6 @@ protected:
         GLuint compileShader(const char *path, GLenum shaderType);
         char *loadShaderFromFile(const char *path);
         
-private:
-        /**
-         * Before calling the
-         */
         virtual void _drawOneFrame(double ellapsedTime);
     
 protected:

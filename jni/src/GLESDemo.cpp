@@ -1,5 +1,6 @@
 #include "GLESDemo.h"
 #include "res_texture.c"
+#include "terran.c"
 
 void GLESDemo::initShaders()
 {
@@ -27,6 +28,7 @@ void GLESDemo::drawOneFrame(double ellapsedTime)
     
     
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    //glClearDepthf(0.0); ?
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -53,9 +55,15 @@ void GLESDemo::drawOneFrame(double ellapsedTime)
 
 void GLESDemo::positInit()
 {
-     initShaders();
-     createTexture();
-     glEnable(GL_DEPTH_TEST);
+	initShaders();
+    createTexture();
+    // Enable depth buffer
+    glDepthFunc(GL_LEQUAL);
+	glEnable(GL_DEPTH_TEST);
+
+	// Enable back face culling
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
     cube = new Cube();
     
     projection = glm::perspective(45.0, (double) width / height, 0.1, 100.0);
@@ -79,10 +87,10 @@ void GLESDemo::createTexture()
     glTexImage2D(GL_TEXTURE_2D, // target
                  0,  // level, 0 = base, no minimap,
                  GL_RGB, // internalformat
-                 res_texture.width,  // width
-                 res_texture.height,  // height
+                 terran.width,  // width
+                 terran.height,  // height
                  0,  // border, always 0 in OpenGL ES
                  GL_RGB,  // format
                  GL_UNSIGNED_BYTE, // type
-                 res_texture.pixel_data);
+                 terran.pixel_data);
 }

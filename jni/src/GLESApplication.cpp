@@ -1,5 +1,26 @@
 #include "GLESApplication.h"
 
+//////////// STATIC
+
+/**
+ * Static function to handle input. Because we receive the android_app context
+ * we can cast the user data saved before to our GLESApplication.
+ */
+static int32_t handle_input(struct android_app* app, AInputEvent* event) {
+    GLESApplication *glApp = (GLESApplication*) app->userData;
+    return glApp->handleInput(app, event);
+}
+
+/**
+ * Static function to handle commands. Because we receive the android_app context
+ * we can cast the user data saved before to our GLESApplication.
+ */
+static void handle_cmd(struct android_app* app, int32_t cmd) {
+    GLESApplication *glesApp = (GLESApplication *)app->userData;
+    glesApp->handleCommand(app, cmd);
+
+}
+
 int GLESApplication::initWindow(android_app *app)
 {
     // initialize OpenGL ES and EGL
@@ -14,7 +35,7 @@ int GLESApplication::initWindow(android_app *app)
             EGL_BLUE_SIZE, 5,
             EGL_GREEN_SIZE, 6,
             EGL_RED_SIZE, 5,
-            EGL_DEPTH_SIZE, 1, 
+            EGL_DEPTH_SIZE, 1,
             EGL_NONE
     };
    
@@ -134,6 +155,12 @@ char* GLESApplication::loadShaderFromFile(const char *path)
     return buffer;
 }
 
+
+int32_t GLESApplication::handleInput(android_app *app, AInputEvent *event)
+{
+    return 0;
+}
+
 void GLESApplication::handleCommand(android_app *app, int32_t cmd)
 {
     switch (cmd) {
@@ -221,26 +248,6 @@ void GLESApplication::_drawOneFrame(double ellapsedTime)
     drawOneFrame(ellapsedTime);
     eglSwapBuffers(this->display, this->surface);
 }
-
-/**
- * Static function to handle input. Because we receive the android_app context
- * we can cast the user data saved before to our GLESApplication.
- */
-static int32_t handle_input(struct android_app* app, AInputEvent* event) {
-    GLESApplication *glApp = (GLESApplication*) app->userData;
-    return glApp->handleInput(app, event);
-}
-
-/**
- * Static function to handle commands. Because we receive the android_app context
- * we can cast the user data saved before to our GLESApplication.
- */
-static void handle_cmd(struct android_app* app, int32_t cmd) {
-    GLESApplication *glesApp = (GLESApplication *)app->userData;
-    glesApp->handleCommand(app, cmd);
-    
-}
-
 
 void GLESApplication::tearDownEGLContext()
 {
@@ -335,7 +342,4 @@ void GLESApplication::run()
     
 }
 
-int32_t GLESApplication::handleInput(android_app *app, AInputEvent *event)
-{
-    return 0;
-}
+

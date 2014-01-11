@@ -38,7 +38,8 @@ void Cube::draw(ShaderProgram *shaderProgram)
   
     /* Push each element in buffer_vertices to the vertex shader */
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_cube_elements);
-    int size;  glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+    int size;
+    glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
     glDrawElements(GL_TRIANGLES, size/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
   
     glDisableVertexAttribArray(vertIdx);
@@ -88,10 +89,11 @@ void Cube::initGeometry()
     
     GLfloat cube_texcoords[2*4*6] = {
         // front
+   		1.0, 0.0,
         0.0, 0.0,
-        1.0, 0.0,
-        1.0, 1.0,
         0.0, 1.0,
+        1.0, 1.0,
+
     };
     for (int i = 1; i < 6; i++)
         memcpy(&cube_texcoords[i*4*2], &cube_texcoords[0], 2*4*sizeof(GLfloat));
