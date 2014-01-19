@@ -172,6 +172,7 @@ void GLESApplication::handleCommand(android_app *app, int32_t cmd)
          * later.
          */
         case APP_CMD_SAVE_STATE:
+        	LOGI("APP_CMD_SAVE_STATE");
         	// The system has asked us to save our current state.  Do so.
             break;
         /**
@@ -180,6 +181,7 @@ void GLESApplication::handleCommand(android_app *app, int32_t cmd)
 		 * surface.
 		 */
         case APP_CMD_INIT_WINDOW:
+        	LOGI("APP_CMD_INIT_WINDOW");
             // The window is being shown, get it ready.
             if (app->window != NULL) {
                 initWindow(app);
@@ -193,6 +195,7 @@ void GLESApplication::handleCommand(android_app *app, int32_t cmd)
 		 * it will be set to NULL.
 		 */
         case APP_CMD_TERM_WINDOW:
+        	LOGI("APP_CMD_TERM_WINDOW");
         	// The window is being hidden or closed, clean it up.
             terminateWindow(app);
             tearDownEGLContext();
@@ -202,7 +205,7 @@ void GLESApplication::handleCommand(android_app *app, int32_t cmd)
 		 * and waiting for the app thread to clean up and exit before proceeding.
 		 */
         case APP_CMD_DESTROY:
-
+        	LOGI("APP_CMD_DESTROY");
             break;
         /**
 		 * Command from main thread: the app's activity window has gained
@@ -210,6 +213,7 @@ void GLESApplication::handleCommand(android_app *app, int32_t cmd)
 		 */
         case APP_CMD_GAINED_FOCUS:
         	// When our app gains focus, we start monitoring the accelerometer.
+        	LOGI("APP_CMD_GAINED_FOCUS");
             gainedFocus(app);
             break;
 		/**
@@ -219,13 +223,14 @@ void GLESApplication::handleCommand(android_app *app, int32_t cmd)
         case APP_CMD_LOST_FOCUS:
         	// When our app loses focus, we stop monitoring the accelerometer.
         	// This is to avoid consuming battery while not being used.
+        	LOGI("APP_CMD_LOST_FOCUS");
             lostFocus(app);
-            LOGI("LOST FOCUS state");
             break;
         /**
 		 * Command from main thread: the app's activity has been started.
 		 */
         case APP_CMD_START:
+        	LOGI("APP_CMD_START");
             onStart(app);
             break;
     }
@@ -246,6 +251,8 @@ void GLESApplication::_drawOneFrame(double ellapsedTime)
         return;
     }
     drawOneFrame(ellapsedTime);
+
+    // posts its color buffer to the associated native window
     eglSwapBuffers(this->display, this->surface);
 }
 
