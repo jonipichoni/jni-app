@@ -276,14 +276,11 @@ void GLESApplication::tearDownEGLContext()
 
 void GLESApplication::run()
 {
-    
-    double delta = 1000.0/60.0;
     androidContext->userData = this;
     androidContext->onAppCmd = handle_cmd;
     androidContext->onInputEvent = handle_input;
 
     double startTime = 0;
-    double timeSinceLastFrame = 0;
     double start = 0;
     int frames = 0;
     
@@ -317,7 +314,10 @@ void GLESApplication::run()
         
         
         // VERSION 1 - DELTA VERSION
-        /*if(timeSinceLastFrame >= delta) {
+        /*
+		double delta = 1000.0/60.0;
+        double timeSinceLastFrame = 0;
+        if(timeSinceLastFrame >= delta) {
             if(start >= 1000) {
                 LOGI("FPS: %d", frames);
                 frames = 0;

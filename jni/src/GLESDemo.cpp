@@ -1,24 +1,20 @@
 #include "GLESDemo.h"
 #include "res_texture.c"
 #include "terran.c"
+#include "ShaderFactory.h"
 
 void GLESDemo::initShaders()
 {
-    GLuint vertexShader;
-    GLuint fragmentShader;
+	// Load configuration order matters
+	Configuration::Instance().Load("GLDemo.cfg");
 
+    // Register Simple Program
+	mSimpleProgram = ShaderFactory::Instance().registerProgram("simple");
 
-
-    vertexShader = compileShader("shaders/simple.vsh", GL_VERTEX_SHADER);
-    fragmentShader = compileShader("shaders/simple.fsh", GL_FRAGMENT_SHADER);
-    
-    simpleProgram = new ShaderProgram(vertexShader, fragmentShader);
-    if(!simpleProgram->link()) {
-        LOGI("Cannot link program");
+	// Error check
+    if(!mSimpleProgram) {
+    	LOGE("Pogram simple not found in shader factory");
     }
-    
-    shaderProgramObject = simpleProgram->getProgramId();
-    
 }
 
 void GLESDemo::drawOneFrame(double ellapsedTime)
@@ -32,24 +28,20 @@ void GLESDemo::drawOneFrame(double ellapsedTime)
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(shaderProgramObject);
+    glUseProgram(mSimpleProgram->getProgramId());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texId);
-    
-    
-    
+
     glm::mat4 mvp = projection * view * model;
     
-    GLint mvpId = simpleProgram->getUniformLocation(MVP);
-    
-    GLint textureLocation = simpleProgram->getUniformLocation(TEXTURE);
+    GLint mvpId = mSimpleProgram->getUniformLocation("mvp");
+    GLint textureLocation = mSimpleProgram->getUniformLocation("atexcoord");
     
     glUniform1i(textureLocation, 0);
-    
     glUniformMatrix4fv(mvpId, 1, GL_FALSE, &mvp[0][0]);
     
-    cube->draw(simpleProgram);
+    cube->draw(mSimpleProgram);
     
 }
 
@@ -74,7 +66,6 @@ void GLESDemo::positInit()
 void GLESDemo::terminateWindow(android_app *app)
 {
     delete cube;
-    delete simpleProgram;
 }
 
 void GLESDemo::createTexture()

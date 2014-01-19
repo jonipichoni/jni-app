@@ -8,10 +8,10 @@ Cube::Cube()
 }
 
 
-void Cube::draw(ShaderProgram *shaderProgram)
+void Cube::draw(ProgramPtr program)
 {
-    
-    GLint vertIdx = shaderProgram->getAttributeLocation(POSITION);
+    GLint vertIdx = program->getAttributeLocation("position");
+
     glEnableVertexAttribArray(vertIdx);
     // Describe our vertices array to OpenGL (it can't guess its format automatically)
     glBindBuffer(GL_ARRAY_BUFFER, vbo_cube_vertices);
@@ -24,7 +24,7 @@ void Cube::draw(ShaderProgram *shaderProgram)
       0                  // offset of first element
     );
   
-    GLint texCoords = shaderProgram->getAttributeLocation(TEX_COORDS);
+    GLint texCoords = program->getAttributeLocation("atexcoord");
     glEnableVertexAttribArray(texCoords);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_cube_texcoords);
     glVertexAttribPointer(

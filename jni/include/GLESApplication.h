@@ -16,6 +16,8 @@
 
 #include "my_log.h"
 #include "stdlib.h"
+#include "Configuration.h"
+#include "ShaderFactory.h"
 
 /**
  * Our saved state data.
@@ -32,12 +34,17 @@ class GLESApplication
     public:
         GLESApplication(android_app *context)
         {
+        	// Initialize members
             this->display = EGL_NO_DISPLAY;
             this->surface = EGL_NO_SURFACE;
             this->context = EGL_NO_CONTEXT;
             this->width = 0;
             this->height = 0;
             this->androidContext = context;
+
+            // Initialize shader factory
+            ShaderFactory::Instance().setAndroidContext(context);
+            Configuration::Instance().setAndroidContext(context);
         }
         
         virtual ~GLESApplication() {}
@@ -68,7 +75,7 @@ class GLESApplication
     
 protected:
         // Ready to inherit
-        virtual void saveState(android_app *app) {}
+        virtual void saveState(android_app *app) {	}
         virtual void gainedFocus(android_app *app) {}
         virtual void lostFocus(android_app *app) {}
         virtual void onStart(android_app* app) {}
@@ -106,7 +113,5 @@ protected:
 
 		// Our App Saved Data
 		struct saved_state state;
-
-        GLuint shaderProgramObject;
 };
 #endif // GLES_APPLICATION_H
