@@ -1,4 +1,5 @@
 #include "GLESApplication.h"
+#include "Helpers/Time.h"
 
 //////////// STATIC
 
@@ -283,12 +284,9 @@ void GLESApplication::run()
     double startTime = 0;
     double start = 0;
     int frames = 0;
-    
+    Time t;
     while (true) {
        
-        startTime = getCuttentTime();
-        
-        
         int ident;
         int events;
         struct android_poll_source* source;
@@ -342,7 +340,7 @@ void GLESApplication::run()
         	frames = 0;
         	start = 0;
         }
-		diff = getCuttentTime() - startTime;
+        diff = t.elapsedTime();
 		start += diff;
 
     }
