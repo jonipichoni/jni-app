@@ -7,7 +7,7 @@
 
 #include "Helpers/Time.h"
 //todo::if class is not gonna grow any further could be implemented in the h file as inline functions.
-Time::Time(float p_timeScale = 1f) {
+Time::Time(float p_timeScale) {
 	m_timeScale = p_timeScale;
 }
 

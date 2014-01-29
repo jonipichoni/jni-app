@@ -12,7 +12,7 @@
 
 class Time {
 public:
-	Time(float p_timeScale = 1f);
+	Time(float p_timeScale = 1.0);
 	virtual ~Time();
 	float elapsedTime() const;
 	float deltaTime() const;
@@ -22,9 +22,10 @@ public:
 	//would probably have to implement a scene change observer
 	void resetSceneTime();
 private:
+	float m_timeScale;
+	float m_deltaTime;
 	boost::timer m_timer;
 	boost::timer m_sceneTime;
-	float m_timeScale;
 };
 
 #endif /* TIME_H_ */

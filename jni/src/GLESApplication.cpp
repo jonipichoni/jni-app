@@ -281,7 +281,6 @@ void GLESApplication::run()
     androidContext->onAppCmd = handle_cmd;
     androidContext->onInputEvent = handle_input;
 
-    double startTime = 0;
     double start = 0;
     int frames = 0;
     Time t;
