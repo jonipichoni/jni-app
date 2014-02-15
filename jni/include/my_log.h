@@ -9,6 +9,8 @@
 #define MY_LOG_H_
 
 #include <android/log.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 
 /*
  	# Define the log tag

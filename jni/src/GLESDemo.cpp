@@ -1,7 +1,8 @@
 #include "GLESDemo.h"
-#include "res_texture.c"
-#include "terran.c"
 #include "ShaderFactory.h"
+#include "Resource.h"
+
+extern AAssetManager* p_asset_mgr;
 
 void GLESDemo::initShaders()
 {
@@ -17,11 +18,12 @@ void GLESDemo::initShaders()
     }
 }
 
-void GLESDemo::drawOneFrame(double ellapsedTime)
+void GLESDemo::drawOneFrame(float ellapsedTime)
 {
-    float angle = ellapsedTime / 1000.0 * 75;
+
+    float angle = ellapsedTime * 1000 / 75;
+
     model = glm::rotate(model, angle, glm::vec3(0, 1, 0));
-    
     
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
     //glClearDepthf(0.0); ?
@@ -30,8 +32,7 @@ void GLESDemo::drawOneFrame(double ellapsedTime)
 
     glUseProgram(mSimpleProgram->getProgramId());
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texId);
+    if(pTexture) pTexture->apply();
 
     glm::mat4 mvp = projection * view * model;
     
@@ -49,6 +50,7 @@ void GLESDemo::positInit()
 {
 	initShaders();
     createTexture();
+
     // Enable depth buffer
     glDepthFunc(GL_LEQUAL);
 	glEnable(GL_DEPTH_TEST);
@@ -63,25 +65,11 @@ void GLESDemo::positInit()
     model = glm::mat4(1.0f);
 }
 
-void GLESDemo::terminateWindow(android_app *app)
-{
-    delete cube;
-}
 
 void GLESDemo::createTexture()
 {
-    glGenTextures(1, &texId);
-    glBindTexture(GL_TEXTURE_2D, texId);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
-    glTexImage2D(GL_TEXTURE_2D, // target
-                 0,  // level, 0 = base, no minimap,
-                 GL_RGB, // internalformat
-                 terran.width,  // width
-                 terran.height,  // height
-                 0,  // border, always 0 in OpenGL ES
-                 GL_RGB,  // format
-                 GL_UNSIGNED_BYTE, // type
-                 terran.pixel_data);
+	std::string file("image.png");
+	pTexture = new GraphicsTexture(p_asset_mgr,file.c_str());
+
+	if(!pTexture->load()) LOGE("Could load %s",file.c_str());
 }

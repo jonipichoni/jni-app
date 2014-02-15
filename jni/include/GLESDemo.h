@@ -8,21 +8,28 @@
 #include "GLESApplication.h"
 #include "Program.h"
 #include "Cube.h"
+#include "GraphicsTexture.h"
 
 using namespace std;
 
 class GLESDemo : public GLESApplication
 {
 public:
-    GLESDemo(android_app *app) : GLESApplication(app) {}
-    ~GLESDemo() {}
+    GLESDemo() : GLESApplication() {}
+    ~GLESDemo() {
+    	if(cube) delete cube;
+    	if(pTexture) delete pTexture;
+    }
     
+    void drawOneFrame(float ellapsedTime);
     
+private:
+
+    uint8_t* loadpng();
+
 protected:
     void initShaders();
-    void drawOneFrame(double ellapsedTime);
     void positInit();
-    void terminateWindow(android_app *app);
     void createTexture();
 
     ProgramPtr mSimpleProgram;
@@ -31,6 +38,7 @@ protected:
     glm::mat4 view;
     glm::mat4 model;
     Cube *cube;
+    GraphicsTexture* pTexture;
     GLuint texId;
     
 };

@@ -1,5 +1,12 @@
 #include "ShaderFactory.h"
 
+// for native asset manager
+#include <sys/types.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+
+extern AAssetManager* p_asset_mgr;
+
 /**
  * Lazy implementation. @TODO
  * http://stackoverflow.com/questions/449436/singleton-instance-declared-as-static-variable-of-getinstance-method/449823#449823
@@ -90,7 +97,7 @@ GLuint ShaderFactory::compileShader(string path, GLenum shaderType)
 
 char* ShaderFactory::loadShaderFromFile(const char *path)
 {
-    AAsset *shaderAsset= AAssetManager_open(mAndroidContext->activity->assetManager, path, AASSET_MODE_BUFFER);
+    AAsset *shaderAsset= AAssetManager_open(p_asset_mgr, path, AASSET_MODE_BUFFER);
     size_t length = AAsset_getLength(shaderAsset);
 
     LOGI("Shader source size: %d\n", length);

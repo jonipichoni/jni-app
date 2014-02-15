@@ -1,8 +1,7 @@
 #More info: http://www.kandroid.org/ndk/docs/APPLICATION-MK.html
 
 # APP_ABI := armeabi x86
-APP_PLATFORM := android-9
-
+ APP_PLATFORM := android-9
 
 # This optional variable can be defined to either 'release' or 'debug'. 
 # This is used to alter the optimization level when
@@ -13,16 +12,8 @@ APP_OPTIM := debug
 #-DDEBUG  				# Internal Debug macro
 #-fexceptions   		# -fexceptions: Boost can throw exceptions(http://www.boost.org/doc/libs/1_36_0/libs/utility/throw_exception.html)
 #-Wall 					# turn on warnings
-#-Wextra        		# turn on extra warnings
-#-Werror        		# treat warnings as errors
-#-Wno-unused-parameter 	# unused-parameter not as warning
-#-Wno-unused-function 	# unused-function not as warning 				
-APP_CFLAGS := 	-DDEBUG \
+APP_CFLAGS :=	-DDEBUG \
 				-fexceptions \
-				-Wall \
-				-Wextra \
-				-Werror \
-				-Wno-unused-parameter \
-				-Wno-unused-function  
+				-Wall
 
 APP_STL := gnustl_static

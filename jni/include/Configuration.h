@@ -9,9 +9,11 @@
 
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
+
+// for native asset manager
+#include <sys/types.h>
 #include <android/asset_manager.h>
-#include <android/native_activity.h>
-#include <android_native_app_glue.h>
+#include <android/asset_manager_jni.h>
 
 #include "my_log.h"
 
@@ -46,14 +48,7 @@ public:
     bool Get(const string& key, double& value) const;
     bool Get(const string& key, bool&   value) const;
 
-    // We need the android context for the asset manager
-	void setAndroidContext(android_app* _androidContext){
-		mAndroidContext = _androidContext;
-	}
-
 private:
-	//This is the interface for the standard glue code of a threaded application.
-    android_app* mAndroidContext;
 
     // the container
     map<string,string> data;

@@ -1,5 +1,12 @@
 #include "Configuration.h"
 
+// for native asset manager
+#include <sys/types.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+
+extern AAssetManager* p_asset_mgr;
+
 void Configuration::Clear()
 {
     data.clear();
@@ -9,56 +16,66 @@ bool Configuration::Load(const string& file)
 {
 	static Configuration _sConfigiration;
 
-	AAsset *shaderAsset= AAssetManager_open(mAndroidContext->activity->assetManager, file.c_str(), AASSET_MODE_BUFFER);
-	size_t length = AAsset_getLength(shaderAsset);
+	AAsset *shaderAsset= AAssetManager_open(p_asset_mgr, file.c_str(), AASSET_MODE_BUFFER);
+	//AAsset *shaderAsset= AAssetManager_open(p_asset_mgr, file.c_str(), AASSET_MODE_UNKNOWN);
 
-	LOGI("Config file size: %d\n", length);
+	 if( shaderAsset != NULL )
+	 {
+		size_t length = AAsset_getLength(shaderAsset);
 
-	char* buffer = (char*) malloc(length);
+		LOGI("Config file size: %d\n", length);
 
-	AAsset_read(shaderAsset, buffer, length);
+		char* buffer = (char*) malloc(length);
 
-	buffer[length - 1] = '\0';
+		AAsset_read(shaderAsset, buffer, length);
 
-	LOGI("Config file: %s\n", buffer);
+		buffer[length - 1] = '\0';
 
-	AAsset_close(shaderAsset);
+		LOGI("Config file: %s\n", buffer);
+
+		AAsset_close(shaderAsset);
 
 
-	char * line = strtok(strdup(buffer), "\n");
+		char * line = strtok(strdup(buffer), "\n");
 
-	while(line) {
-		std::string sline (line);
+		while(line) {
+			std::string sline (line);
 
-		// filter out comments
-		if (!sline.empty())
-		{
-			int pos = sline.find('#');
-
-			if (pos != (int)string::npos)
+			// filter out comments
+			if (!sline.empty())
 			{
-				sline = sline.substr(0, pos);
-			}
-		}
+				int pos = sline.find('#');
 
-		// split line into key and value
-		if (!sline.empty())
-		{
-
-			int pos = sline.find('=');
-
-			if (pos != (int)string::npos)
-			{
-				string key     = Trim(sline.substr(0, pos));
-				string value   = Trim(sline.substr(pos + 1));
-
-				if (!key.empty() && !value.empty())
+				if (pos != (int)string::npos)
 				{
-					data[key] = value;
+					sline = sline.substr(0, pos);
 				}
 			}
+
+			// split line into key and value
+			if (!sline.empty())
+			{
+
+				int pos = sline.find('=');
+
+				if (pos != (int)string::npos)
+				{
+					string key     = Trim(sline.substr(0, pos));
+					string value   = Trim(sline.substr(pos + 1));
+
+					if (!key.empty() && !value.empty())
+					{
+						data[key] = value;
+					}
+				}
+			}
+		   line  = strtok(NULL, "\n");
 		}
-	   line  = strtok(NULL, "\n");
+	 }
+	else
+	{
+		LOGE("Could not open file: %s",file.c_str());
+		return false;
 	}
 
     return true;
