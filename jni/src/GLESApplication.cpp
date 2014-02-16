@@ -1,5 +1,6 @@
 #include "GLESApplication.h"
 #include "Helpers/Time.h"
+#include "bluetooth.h"
 
 //////////// STATIC
 
@@ -16,6 +17,9 @@ int GLESApplication::init(int w, int h)
     this->width = w;
     this->height = h;
     
+    // Load Bluetooth
+    bt::init();
+
     positInit();
     
     return 0;

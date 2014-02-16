@@ -7,8 +7,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
+#include "opengl.h"
 
 // for native asset manager
 #include <sys/types.h>

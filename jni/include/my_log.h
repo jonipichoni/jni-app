@@ -9,8 +9,6 @@
 #define MY_LOG_H_
 
 #include <android/log.h>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
 
 /*
  	# Define the log tag
@@ -103,8 +101,4 @@ define LOGF(...) MY_LOG_NOOP
 #	define LOGA(...) MY_LOG_NOOP
 #endif
 
-static void printGLString(const char *name, GLenum s) {
-    const char *v = (const char *) glGetString(s);
-    LOGI("GL %s = %s\n", name, v);
-}
 #endif /* MY_LOG_H_ */

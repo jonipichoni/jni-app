@@ -1,7 +1,7 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
-#include <GLES2/gl2.h>
+#include "opengl.h"
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include <string>

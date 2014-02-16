@@ -1,7 +1,7 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-#include <GLES2/gl2.h>
+#include "opengl.h"
 #include "glm/glm.hpp"
 #include "Program.h"
 

@@ -4,7 +4,7 @@
 #include "Resource.h"
 
 
-#include <GLES/gl.h>
+#include "opengl.h"
 #include <png.h>
 
 class GraphicsTexture {

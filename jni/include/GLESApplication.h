@@ -2,8 +2,7 @@
 #define GLES_APPLICATION_H
 
 
-#include <EGL/egl.h>
-#include <GLES2/gl2.h>
+#include "opengl.h"
 
 #include <stdlib.h>
 #include <time.h>

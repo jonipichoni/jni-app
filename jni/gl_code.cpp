@@ -4,9 +4,6 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -15,6 +12,7 @@
 
 #include "GLESDemo.h"
 #include "my_log.h"
+#include "opengl.h"
 
 GLESDemo glesApp;
 AAssetManager* p_asset_mgr;
