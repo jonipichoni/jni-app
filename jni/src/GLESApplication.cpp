@@ -22,7 +22,7 @@ int GLESApplication::init(int w, int h)
 }
 
 
-double GLESApplication::getCuttentTime()
+double GLESApplication::getCurrentTime()
 {
     static struct timeval start;
     

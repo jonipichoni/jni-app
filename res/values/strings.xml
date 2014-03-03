@@ -23,6 +23,7 @@
 
 <resources>
     <!-- Simple strings. -->
+    <string name="app_name">GL2JNI</string>
     <string name="gl2jni_activity">GL2JNI</string>
 
 </resources>

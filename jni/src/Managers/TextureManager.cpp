@@ -1,41 +1,90 @@
+/*
+ * TextureManager.cpp
+ *
+ *  Created on: 28 Feb 2014
+ *      Author: rogelio
+ */
 #include "my_log.h"
-#include "GraphicsTexture.h"
+#include "Managers/TextureManager.h"
+#include "exception"
 
-GraphicsTexture::GraphicsTexture(const char* pPath):
-	mResource(pPath)
-{
-}
-GraphicsTexture::GraphicsTexture(AAssetManager* pAssetManager,
-	const char* pPath) :
-	mResource(pAssetManager, pPath),
-	mTextureId(0),
-	mWidth(0), mHeight(0)
-{}
+#include <png/png.h>
+//extern AAssetManager* p_asset_mgr;
 
-const char* GraphicsTexture::getPath() {
-	return mResource.getPath();
+TextureManager::TextureManager() {
+	// TODO Auto-generated constructor stub
+
 }
 
-int32_t GraphicsTexture::getHeight() {
-	return mHeight;
+TextureManager::~TextureManager() {
+	// TODO Auto-generated destructor stub
 }
 
-int32_t GraphicsTexture::getWidth() {
-	return mWidth;
+GraphicsTexture::TexturePtr TextureManager::getTexture(std::string pPath) {
+	GraphicsTexture::TexturePtr texture;
+	if (mTextures.find(pPath)!=mTextures.end()){
+		texture = mTextures[pPath];
+	} else {
+		try{
+			registerTexture(pPath);
+			texture = mTextures[pPath];
+		}
+		//todo: sort out type of exception
+		catch (...) {
+			LOGI("texture was not found should use debug texture");
+			texture = mTextures["debug"];
+		}
+	}
+	return texture;
 }
 
-void GraphicsTexture::setSize(int32_t pWidth,int32_t pHeight) {
-	mWidth = pWidth;
-	mHeight = pHeight;
+bool TextureManager::registerTexture(std::string pPath) {
+	LOGI("creating new textureeee");
+	boost::shared_ptr<GraphicsTexture> gt(new GraphicsTexture(pPath.c_str()));
+	uint8_t* lImageBuffer = loadImage(gt);
+	if (lImageBuffer == NULL) {
+		return false;
+	}
+	GLuint mTextureId;
+	// Creates a new OpenGL texture.
+	glGenTextures(1, &mTextureId);
+	(*gt).setTextureId(mTextureId);
+	glBindTexture(GL_TEXTURE_2D, mTextureId);
+	// Set-up texture properties.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+		GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+		GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+		GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+		GL_CLAMP_TO_EDGE);
+	// Loads image data into OpenGL.
+	glTexImage2D(GL_TEXTURE_2D, 0, (*gt).getFormat(), (*gt).getWidth(), (*gt).getHeight(), 0,
+			(*gt).getFormat(), GL_UNSIGNED_BYTE, lImageBuffer);
+	delete[] lImageBuffer;
+	if (glGetError() != GL_NO_ERROR) {
+		//needs work
+		throw 1;
+		LOGE("Error loading texture into OpenGL.");
+		//shared_ptr will take care of it
+		return false;
+	}
+	mTextures[pPath] = gt;
+	return true;
 }
-void GraphicsTexture::setFormat(GLint pFormat) {
-	mFormat= pFormat;
+
+void TextureManager::callback_read(png_structp pStruct,
+	png_bytep pData, png_size_t pSize) {
+	Resource* lResource = ((Resource*) png_get_io_ptr(pStruct));
+	if (!lResource->read(pData, pSize)) {
+		lResource->close();
+	}
 }
-void GraphicsTexture::setTextureId(GLuint pTextureId) {
-	mTextureId = pTextureId;
-}
-uint8_t* GraphicsTexture::loadImage() {
-	LOGI("Loading texture %s", mResource.getPath());
+
+uint8_t* TextureManager::loadImage(GraphicsTexture::TexturePtr pTexture) {
+	Resource resource = (*pTexture).getResource();
+	LOGI("Loading texture %s", resource.getPath());
 
 	png_byte lHeader[8];
 	png_structp lPngPtr = NULL; png_infop lInfoPtr = NULL;
@@ -43,9 +92,9 @@ uint8_t* GraphicsTexture::loadImage() {
 	png_int_32 lRowSize; bool lTransparency;
 
 	// Opens and checks image signature (first 8 bytes).
-	if (!mResource.open()) goto ERROR;
+	if (!resource.open()) goto ERROR;
 	LOGI("Checking signature.");
-	if (!mResource.read(lHeader, sizeof(lHeader)))
+	if (!resource.read(lHeader, sizeof(lHeader)))
 		goto ERROR;
 	if (png_sig_cmp(lHeader, 0, 8) != 0) goto ERROR;
 
@@ -58,7 +107,7 @@ uint8_t* GraphicsTexture::loadImage() {
 	if (!lInfoPtr) goto ERROR;
 
 	// Prepares reading operation by setting-up a read callback.
-	png_set_read_fn(lPngPtr, &mResource, callback_read);
+	png_set_read_fn(lPngPtr, &resource, callback_read);
 	// Set-up error management. If an error occurs while reading,
 	// code will come back here and jump
 	if (setjmp(png_jmpbuf(lPngPtr))) goto ERROR;
@@ -71,7 +120,7 @@ uint8_t* GraphicsTexture::loadImage() {
 	png_uint_32 lWidth, lHeight;
 	png_get_IHDR(lPngPtr, lInfoPtr, &lWidth, &lHeight,
 		&lDepth, &lColorType, NULL, NULL, NULL);
-	mWidth = lWidth; mHeight = lHeight;
+	(*pTexture).setSize(lWidth, lHeight);
 
 	// Creates a full alpha channel if transparency is encoded as
 	// an array of palette entries or a single transparent color.
@@ -92,21 +141,21 @@ uint8_t* GraphicsTexture::loadImage() {
 	switch (lColorType) {
 	case PNG_COLOR_TYPE_PALETTE:
 		png_set_palette_to_rgb(lPngPtr);
-		mFormat = lTransparency ? GL_RGBA : GL_RGB;
+		(*pTexture).setFormat(lTransparency ? GL_RGBA : GL_RGB);
 		break;
 	case PNG_COLOR_TYPE_RGB:
-		mFormat = lTransparency ? GL_RGBA : GL_RGB;
+		(*pTexture).setFormat(lTransparency ? GL_RGBA : GL_RGB);
 		break;
 	case PNG_COLOR_TYPE_RGBA:
-		mFormat = GL_RGBA;
+		(*pTexture).setFormat(GL_RGBA);
 		break;
 	case PNG_COLOR_TYPE_GRAY:
 		png_set_expand_gray_1_2_4_to_8(lPngPtr);
-		mFormat = lTransparency ? GL_LUMINANCE_ALPHA:GL_LUMINANCE;
+		(*pTexture).setFormat(lTransparency ? GL_LUMINANCE_ALPHA:GL_LUMINANCE);
 		break;
 	case PNG_COLOR_TYPE_GA:
 		png_set_expand_gray_1_2_4_to_8(lPngPtr);
-		mFormat = GL_LUMINANCE_ALPHA;
+		(*pTexture).setFormat(GL_LUMINANCE_ALPHA);
 		break;
 	}
 	// Validates all tranformations.
@@ -130,14 +179,14 @@ uint8_t* GraphicsTexture::loadImage() {
 	png_read_image(lPngPtr, lRowPtrs);
 
 	// Frees memory and resources.
-	mResource.close();
+	resource.close();
 	png_destroy_read_struct(&lPngPtr, &lInfoPtr, NULL);
 	delete[] lRowPtrs;
 	return lImageBuffer;
 
 ERROR:
 	LOGE("Error while reading PNG file");
-	mResource.close();
+	resource.close();
 	delete[] lRowPtrs; delete[] lImageBuffer;
 	if (lPngPtr != NULL) {
 		png_infop* lInfoPtrP = lInfoPtr != NULL ? &lInfoPtr: NULL;
@@ -145,55 +194,14 @@ ERROR:
 	}
 	return NULL;
 }
-
-void GraphicsTexture::callback_read(png_structp pStruct,
-	png_bytep pData, png_size_t pSize) {
-	Resource* lResource = ((Resource*) png_get_io_ptr(pStruct));
-	if (!lResource->read(pData, pSize)) {
-		lResource->close();
+void TextureManager::unload(std::string pPath) {
+	if (mTextures.find(pPath)!=mTextures.end()) {
+		//quick and dirty
+		//not sure is safe need to check
+		mTextures[pPath]->unload();
 	}
-}
-
-bool GraphicsTexture::load() {
-	uint8_t* lImageBuffer = loadImage();
-	if (lImageBuffer == NULL) {
-		return false;
+	else {
+		LOGI("texture %s not found\n",pPath.c_str() );
 	}
 
-	// Creates a new OpenGL texture.
-	glGenTextures(1, &mTextureId);
-	glBindTexture(GL_TEXTURE_2D, mTextureId);
-	// Set-up texture properties.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-		GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-		GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-		GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
-		GL_CLAMP_TO_EDGE);
-	// Loads image data into OpenGL.
-	glTexImage2D(GL_TEXTURE_2D, 0, mFormat, mWidth, mHeight, 0,
-				 mFormat, GL_UNSIGNED_BYTE, lImageBuffer);
-	delete[] lImageBuffer;
-	if (glGetError() != GL_NO_ERROR) {
-		LOGE("Error loading texture into OpenGL.");
-		unload();
-		return false;
-	}
-	return true;
 }
-
-void GraphicsTexture::unload() {
-	if (mTextureId != 0) {
-		glDeleteTextures(1, &mTextureId);
-		mTextureId = 0;
-	}
-	mWidth = 0; mHeight = 0; mFormat = 0;
-}
-
-void GraphicsTexture::apply() {
-	glActiveTexture( GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mTextureId);
-}
-

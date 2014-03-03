@@ -7,6 +7,7 @@
 
 class Resource {
 public:
+	Resource(const char* pPath);
 	Resource(AAssetManager* pAssetManager, const char* pPath);
 
 	const char* getPath();

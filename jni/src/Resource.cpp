@@ -1,5 +1,11 @@
 #include "Resource.h"
+#include "Managers/AssetManager.h"
 
+Resource::Resource(const char* pPath):
+	mPath(pPath),
+	mAsset(NULL)
+{
+}
 Resource::Resource(AAssetManager* pAssetManager, const char* pPath):
 	mPath(pPath),
 	mAssetManager(pAssetManager),
@@ -8,14 +14,13 @@ Resource::Resource(AAssetManager* pAssetManager, const char* pPath):
 }
 
 bool Resource::open() {
-	mAsset = AAssetManager_open(mAssetManager, mPath,
-								AASSET_MODE_UNKNOWN);
+	mAsset = AssetManager::Instance().Open(mPath, AASSET_MODE_UNKNOWN);
 	return (mAsset != NULL) ? true : false;
 }
 
 void Resource::close() {
 	if (mAsset != NULL) {
-		AAsset_close(mAsset);
+		AssetManager::Instance().Close(mAsset);
 		mAsset = NULL;
 	}
 }

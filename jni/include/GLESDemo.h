@@ -9,7 +9,9 @@
 #include "Program.h"
 #include "Cube.h"
 #include "GraphicsTexture.h"
-
+#include "GameObject.h"
+#include "Managers/RenderManager.h"
+#include "Managers/TextureManager.h"
 using namespace std;
 
 class GLESDemo : public GLESApplication
@@ -18,7 +20,7 @@ public:
     GLESDemo() : GLESApplication() {}
     ~GLESDemo() {
     	if(cube) delete cube;
-    	if(pTexture) delete pTexture;
+    	//if(pTexture) delete pTexture;
     }
     
     void drawOneFrame(float ellapsedTime);
@@ -26,20 +28,24 @@ public:
 private:
 
     uint8_t* loadpng();
+	void InitializeCamera();
 
 protected:
+	void initManagers();
+	void initScene();
     void initShaders();
     void positInit();
-    void createTexture();
 
     ProgramPtr mSimpleProgram;
-    
+    RenderManager mRenderManager;
+    TextureManager mTextureManager;
     glm::mat4 projection;
     glm::mat4 view;
     glm::mat4 model;
     Cube *cube;
-    GraphicsTexture* pTexture;
+    GraphicsTexture::TexturePtr pTexture;
     GLuint texId;
+    GameObject* go;
     
 };
 
