@@ -5,7 +5,8 @@
 
 #include "boost/shared_ptr.hpp"
 #include <GLES/gl.h>
-#include <png/png.h>
+#include <png.h>
+//#include <png/png.h>
 
 class GraphicsTexture {
 public:

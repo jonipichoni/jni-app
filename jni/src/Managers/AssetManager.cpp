@@ -9,7 +9,7 @@
 #include "Managers/AssetManager.h"
 #include "Assets/IAsset.h"
 
-#include <android/native_activity.h>
+//#include <android/native_activity.h>
 
 AssetManager& AssetManager::Instance()
 {
@@ -18,7 +18,6 @@ AssetManager& AssetManager::Instance()
 }
 
 bool AssetManager::hasFile(std::string p_path) {
-
 	return true;
 }
 AAsset* AssetManager::Open(std::string pPath, int pMode) {

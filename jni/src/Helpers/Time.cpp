@@ -6,7 +6,8 @@
  */
 
 #include "Helpers/Time.h"
-//todo::if class is not gonna grow any further could be implemented in the h file as inline functions.
+//todo: if class is not gonna grow any further could be implemented in the h file as inline functions.
+//todo: implement a function that updates delta time and deltaTime() should return that value
 Time::Time(float p_timeScale) {
 	m_timeScale = p_timeScale;
 }

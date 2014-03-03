@@ -11,6 +11,7 @@
 #include <map>
 
 using namespace std;
+
 class SceneManager {
 
 public:
@@ -19,7 +20,7 @@ public:
 	void loadSceneByName(string path);
 	void loadSceneByID(int p_id);
 private:
-	std::string m_sceneName;
+	string m_sceneName;
 	int m_sceneID;
 	map<string,int> m_allScenes;
 	void loadSceneDescriptors(string p_file);
