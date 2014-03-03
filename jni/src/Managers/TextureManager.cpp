@@ -8,7 +8,7 @@
 #include "Managers/TextureManager.h"
 #include "exception"
 
-#include <png/png.h>
+#include <png.h>
 //extern AAssetManager* p_asset_mgr;
 
 TextureManager::TextureManager() {
