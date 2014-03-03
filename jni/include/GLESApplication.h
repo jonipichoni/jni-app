@@ -44,7 +44,7 @@ class GLESApplication
         /**
          * @TODO - move this from here
          */
-        double getCuttentTime();
+        double getCurrentTime();
 
         virtual void drawOneFrame(float ellapsedTime)  = 0;
     
