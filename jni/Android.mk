@@ -10,8 +10,7 @@ include $(CLEAR_VARS)
 LOCAL_CFLAGS := -Wextra \
 				-Werror \
 				-Wno-unused-parameter \
-				-Wno-unused-function  
-				
+				-Wno-unused-function  \
 				-frtti
 LOCAL_MODULE    := libBBgame
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include \
