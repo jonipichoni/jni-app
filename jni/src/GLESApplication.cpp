@@ -1,6 +1,8 @@
 #include "GLESApplication.h"
 #include "Helpers/Time.h"
 
+#include "ThreadPool.h"
+
 //////////// STATIC
 
 int GLESApplication::init(int w, int h)
@@ -18,6 +20,20 @@ int GLESApplication::init(int w, int h)
     
     positInit();
     
+    /////////////////
+
+    ThreadPool* myPool = new ThreadPool(5);
+
+	//time_t t1=time(NULL);
+
+	//Lets start bullying ThreadPool with tonnes of work !!!
+	for(unsigned int i=0;i<200;i++){
+		WorkerThread* myThread = new WorkerThread(i);
+		myPool->setWork(myThread);
+	}
+
+    ////////////////
+
     return 0;
 }
 
