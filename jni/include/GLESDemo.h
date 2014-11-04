@@ -1,6 +1,10 @@
 #ifndef GLESDEMO_H
 #define GLESDEMO_H
 
+// @todo investigate
+#define GLM_FORCE_COMPILER_UNKNOWN
+#define GLM_FORCE_PURE
+
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 #include "glm/gtc/quaternion.hpp"
