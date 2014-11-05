@@ -8,7 +8,6 @@ include $(CLEAR_VARS)
 #-Wno-unused-parameter 	# unused-parameter not as warning
 #-Wno-unused-function 	# unused-function not as warning 				
 LOCAL_CFLAGS := -Wextra \
-				-Werror \
 				-Wno-unused-parameter \
 				-Wno-unused-function  \
 				-frtti

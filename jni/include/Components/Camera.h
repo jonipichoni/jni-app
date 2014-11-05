@@ -8,6 +8,8 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
+#define GLM_FORCE_COMPILER_UNKNOWN
+#define GLM_FORCE_PURE
 #include "Components/IComponent.h"
 #include "glm/glm.hpp"
 

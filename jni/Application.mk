@@ -1,6 +1,6 @@
 #More info: http://www.kandroid.org/ndk/docs/APPLICATION-MK.html
 
-# APP_ABI := armeabi x86
+ APP_ABI := armeabi x86
  APP_PLATFORM := android-9
 
 # This optional variable can be defined to either 'release' or 'debug'. 
