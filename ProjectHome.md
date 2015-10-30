@@ -1,0 +1,1 @@
+Focused native android app
